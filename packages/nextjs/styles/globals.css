@@ -19,6 +19,19 @@ h4 {
   line-height: 1;
 }
 
+h1 {
+  @apply text-2xl
+}
+
+h2 {
+  @apply text-xl
+}
+
+h3 {
+  @apply text-lg
+}
+
+
 p {
   margin: 1rem 0;
 }
