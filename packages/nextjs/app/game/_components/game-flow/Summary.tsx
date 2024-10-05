@@ -24,10 +24,8 @@ export const Summary = () => {
     // Initialize Web3 for Scroll Sepolia
     const initWeb3 = async () => {
       if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
-        // Create a new Web3 instance with the Ethereum provider
         const web3Instance = new Web3(window.ethereum);
 
-        // Define Scroll Sepolia chain details
         const scrollSepoliaChain = {
           chainId: "0x8274F", // Correct Chain ID for Scroll Sepolia
           chainName: "Scroll Sepolia",

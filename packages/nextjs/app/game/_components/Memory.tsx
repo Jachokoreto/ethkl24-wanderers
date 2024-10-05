@@ -5,7 +5,7 @@ import Web3 from "web3";
 
 // Add your compiled contract's ABI here
 
-const CONTRACT_ADDRESS = "0x819D32DDA82b8E4739C9Ef2d0717FDB3feD07978"; // Replace with your deployed contract address
+const CONTRACT_ADDRESS = "0x91e1291C6983815dA023e160FdeDc3C18E2d7166"; // Replace with your deployed contract address
 
 export const Memory = () => {
   const [web3, setWeb3] = useState<any>(null);
