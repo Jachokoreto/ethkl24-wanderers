@@ -1,12 +1,13 @@
 import React, { use, useEffect, useState } from "react";
 import { Button } from "./Button";
 import { useAccount, useWriteContract } from "wagmi";
-import { CONTRACT_ADDRESS, swipeContractAbi } from "~~/contracts/swipeContract";
+import { CONTRACT_ADDRESS, nftContractAbi } from "~~/contracts/nftContract";
+import { CONTRACT_ADDRESS as SwipeContractAddress, swipeContractAbi } from "~~/contracts/swipeContract";
 
-
+// import Web3 from "web3";
 
 export const Memory = () => {
-  const {writeContract} = useWriteContract();
+  const { writeContract } = useWriteContract();
   const account = useAccount();
 
   // const mintNFT = async () => {
@@ -25,14 +26,17 @@ export const Memory = () => {
   return (
     <div>
       <h1>Memory</h1>
-      <Button text="Mint" onClick={() => {
-        writeContract({
-          abi: swipeContractAbi,
-          address: CONTRACT_ADDRESS,
-          functionName: "mint",
-          args: [account, "This is testing"],
-        });
-      }} />
+      <Button
+        text="Mint"
+        onClick={() => {
+          writeContract({
+            abi: swipeContractAbi,
+            address: CONTRACT_ADDRESS,
+            functionName: "mint",
+            args: [account, "This is testing"],
+          });
+        }}
+      />
     </div>
   );
 };

@@ -10,7 +10,9 @@ export const Home = () => {
     <div className="h-screen flex items-center justify-center">
       <div className="card bg-neutral text-neutral-content h-[350px] w-[600px] rounded-3xl">
         <div className="card-body items-center text-center">
-          <h2 className="card-title"><RainbowKitCustomConnectButton/></h2>
+          <h2 className="card-title">
+            <RainbowKitCustomConnectButton />
+          </h2>
           <p className="text-5xl font-extrabold">Im ready to meet</p>
           <div className="flex gap-x-3 justify-end w-full">
             <Button className="w-full font-bold" onClick={() => {}} text="him"></Button>

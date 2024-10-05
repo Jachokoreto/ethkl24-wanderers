@@ -25,9 +25,9 @@ const wallets = [
     : []),
 ];
 
-/**
- * wagmi connectors for the wagmi context
- */
+// /**
+//  * wagmi connectors for the wagmi context
+//  */
 export const wagmiConnectors = connectorsForWallets(
   [
     {

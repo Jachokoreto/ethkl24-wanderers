@@ -1,6 +1,6 @@
-import { IScene } from "~~/services/store/store";
+import { IScene, UserType } from "~~/services/store/store";
 
-const scene: IScene[] = [
+export const scene1: IScene[] = [
   {
     id: "scene1",
     from: "system",
@@ -103,4 +103,16 @@ const scene: IScene[] = [
   },
 ];
 
-export default scene;
+export const getScenes = (userType: UserType): IScene[] => {
+  return scene1.map((s) => {
+    if (s.from === userType || s.from === "system") {
+      return s;
+    } else {
+      return {
+        ...s,
+        options: [],
+      };
+    }
+  });
+};
+

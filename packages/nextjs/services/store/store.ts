@@ -12,18 +12,19 @@ import { ChainWithAttributes } from "~~/utils/scaffold-eth";
  */
 export type Page = "home" | "game" | "memory" | "connection";
 export type GameState = "playing" | "end";
+export type UserType = "user1" | "user2";
 
 export type SceneId = string | null;
+
+export interface IOption {
+  text: string;
+  to: SceneId;
+}
 export interface IScene {
   id: SceneId;
   from: "system" | "user1" | "user2";
-    options: {
-    text: string;
-    to: SceneId;
-  }[]; // only one option from system, two option from user1 and user2
+  options: IOption[]; // only one option from system, two option from user1 and user2
 }
-
-
 
 type GlobalState = {
   nativeCurrency: {
@@ -38,10 +39,12 @@ type GlobalState = {
   // Add your own global state here
   page: Page;
   setPage: (page: Page) => void;
-  gameState:  GameState;
+  gameState: GameState;
   setGameState: (gameState: GameState) => void;
-  savedInteractions: IScene[];
+  savedInteractions: undefined | IScene[];
   updateSavedInteractions: (newInteractions: IScene[]) => void;
+  loggedIn: boolean;
+  setLoggedIn: (loggedIn: boolean) => void;
 };
 
 export const useGlobalState = create<GlobalState>(set => ({
@@ -61,7 +64,9 @@ export const useGlobalState = create<GlobalState>(set => ({
   setPage: (page: Page) => set(() => ({ page })),
   gameState: "playing",
   setGameState: (gameState: GameState) => set(() => ({ gameState })),
-  savedInteractions: [],
+  savedInteractions: undefined,
   updateSavedInteractions: (newInteractions: IScene[]) => set(() => ({ savedInteractions: newInteractions })),
+  loggedIn: false,
+  setLoggedIn: (loggedIn: boolean) => set(() => ({ loggedIn })),
   
 }));

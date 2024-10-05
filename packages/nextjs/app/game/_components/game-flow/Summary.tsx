@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../Button";
 import { Card } from "../Card";
-import SwipeContractABI from "./SwipeContractABI.json";
+import SwipeContractABI from "../SwipeContractABI.json";
 import { motion } from "framer-motion";
-import Web3 from "web3";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+// import Web3 from "web3";
 import { useGlobalState } from "~~/services/store/store";
 
 // Add your compiled contract's ABI here
@@ -18,57 +19,59 @@ type Direction = "left" | "right";
 export const Summary = () => {
   const [setPage] = useGlobalState(state => [state.setPage]);
   const [web3, setWeb3] = useState<any>(null);
-  const [account, setAccount] = useState("");
+  // const [account, setAccount] = useState("");
+  const account = useAccount();
+  const { writeContract } = useWriteContract();
 
-  useEffect(() => {
-    // Initialize Web3 for Scroll Sepolia
-    const initWeb3 = async () => {
-      if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
-        // Create a new Web3 instance with the Ethereum provider
-        const web3Instance = new Web3(window.ethereum);
+  // useEffect(() => {
+  //   // Initialize Web3 for Scroll Sepolia
+  //   const initWeb3 = async () => {
+  //     if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
+  //       // Create a new Web3 instance with the Ethereum provider
+  //       const web3Instance = new Web3(window.ethereum);
 
-        // Define Scroll Sepolia chain details
-        const scrollSepoliaChain = {
-          chainId: "0x8274F", // Correct Chain ID for Scroll Sepolia
-          chainName: "Scroll Sepolia",
-          rpcUrls: ["https://sepolia-rpc.scroll.io"],
-          nativeCurrency: {
-            name: "ETH",
-            symbol: "ETH",
-            decimals: 18,
-          },
-          blockExplorerUrls: ["https://sepolia.scrollscan.com"],
-        };
+  //       // Define Scroll Sepolia chain details
+  //       const scrollSepoliaChain = {
+  //         chainId: "0x8274F", // Correct Chain ID for Scroll Sepolia
+  //         chainName: "Scroll Sepolia",
+  //         rpcUrls: ["https://sepolia-rpc.scroll.io"],
+  //         nativeCurrency: {
+  //           name: "ETH",
+  //           symbol: "ETH",
+  //           decimals: 18,
+  //         },
+  //         blockExplorerUrls: ["https://sepolia.scrollscan.com"],
+  //       };
 
-        try {
-          // Check if the user is connected to the correct network
-          const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
-          if (currentChainId !== scrollSepoliaChain.chainId) {
-            await window.ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [scrollSepoliaChain],
-            });
-          }
-        } catch (error) {
-          console.error("Failed to switch to Scroll Sepolia:", error);
-        }
+  //       try {
+  //         // Check if the user is connected to the correct network
+  //         const currentChainId = await window.ethereum.request({ method: "eth_chainId" });
+  //         if (currentChainId !== scrollSepoliaChain.chainId) {
+  //           await window.ethereum.request({
+  //             method: "wallet_addEthereumChain",
+  //             params: [scrollSepoliaChain],
+  //           });
+  //         }
+  //       } catch (error) {
+  //         console.error("Failed to switch to Scroll Sepolia:", error);
+  //       }
 
-        // Request account access
-        try {
-          await window.ethereum.request({ method: "eth_requestAccounts" });
-          const accounts = await web3Instance.eth.getAccounts();
-          setWeb3(web3Instance);
-          setAccount(accounts[0]);
-        } catch (error) {
-          console.error("Failed to connect account:", error);
-        }
-      } else {
-        console.error("Please install MetaMask or use a web3-compatible browser.");
-      }
-    };
+  //       // Request account access
+  //       try {
+  //         await window.ethereum.request({ method: "eth_requestAccounts" });
+  //         const accounts = await web3Instance.eth.getAccounts();
+  //         setWeb3(web3Instance);
+  //         setAccount(accounts[0]);
+  //       } catch (error) {
+  //         console.error("Failed to connect account:", error);
+  //       }
+  //     } else {
+  //       console.error("Please install MetaMask or use a web3-compatible browser.");
+  //     }
+  //   };
 
-    initWeb3();
-  }, []);
+  //   initWeb3();
+  // }, []);
 
   const onSwiped = (direction: Direction) => {
     console.log(`Swiped ${direction}`);
@@ -78,34 +81,46 @@ export const Summary = () => {
     console.log("Liked", { story });
     // setPage("home");
 
-    if (web3 && account) {
-      const contract = new web3.eth.Contract(SwipeContractABI, CONTRACT_ADDRESS);
-      try {
-        // Call the contract's swipe method
-        await contract.methods.swipe("0x234F17c5DD33459177629aa05EE53eB4879Cd935", true, story).send({ from: account });
-        console.log("Story liked!");
-      } catch (error) {
-        console.error("Error liking story:", error);
-      }
-    }
+    // if (web3 && account) {
+    //   const contract = new web3.eth.Contract(SwipeContractABI, CONTRACT_ADDRESS);
+    //   try {
+    //     // Call the contract's swipe method
+    //     await contract.methods.swipe("0x234F17c5DD33459177629aa05EE53eB4879Cd935", true, story).send({ from: account });
+    //     console.log("Story liked!");
+    //   } catch (error) {
+    //     console.error("Error liking story:", error);
+    //   }
+    // }
+    writeContract({
+      abi: SwipeContractABI,
+      address: CONTRACT_ADDRESS,
+      functionName: "swipe",
+      args: ["0x234F17c5DD33459177629aa05EE53eB4879Cd935", true, story],
+    });
   };
 
   const onPass = async () => {
     console.log("Passed", { story });
     // setPage("home");
 
-    if (web3 && account) {
-      const contract = new web3.eth.Contract(SwipeContractABI, CONTRACT_ADDRESS);
-      try {
-        // Call the contract's swipe method
-        await contract.methods
-          .swipe("0x234F17c5DD33459177629aa05EE53eB4879Cd935", false, story)
-          .send({ from: account });
-        console.log("Story passed!");
-      } catch (error) {
-        console.error("Error passing story:", error);
-      }
-    }
+    // if (web3 && account) {
+    //   const contract = new web3.eth.Contract(SwipeContractABI, CONTRACT_ADDRESS);
+    //   try {
+    //     // Call the contract's swipe method
+    //     await contract.methods
+    //       .swipe("0x234F17c5DD33459177629aa05EE53eB4879Cd935", false, story)
+    //       .send({ from: account });
+    //     console.log("Story passed!");
+    //   } catch (error) {
+    //     console.error("Error passing story:", error);
+    //   }
+    // }
+    writeContract({
+      abi: SwipeContractABI,
+      address: CONTRACT_ADDRESS,
+      functionName: "swipe",
+      args: ["0x234F17c5DD33459177629aa05EE53eB4879Cd935", true, story],
+    });
   };
 
   return (
@@ -118,11 +133,21 @@ export const Summary = () => {
         dragSnapToOrigin
       >
         <Card>
-          <h3>Summary</h3>
+          <h3>Coffee Date #1</h3>
+          {/* <p>{story.replace(/\n/g, "<br>")}</p> */}
+
           <p>{story}</p>
+          {/* <p>
+            {story.map((line, index) => (
+              <span key={index}>
+                {line}
+                <br />
+              </span>
+            ))}
+          </p> */}
         </Card>
       </motion.div>
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-4">
         <Button text="Pass" onClick={onPass} />
         <Button text="Like" onClick={onLike} />
       </div>
