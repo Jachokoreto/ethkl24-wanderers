@@ -1,4 +1,5 @@
 import "~~/styles/globals.css";
+
 // import { ThemeProvider } from "~~/components/ThemeProvider";
 
 export const metadata = {
@@ -10,9 +11,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html suppressHydrationWarning>
       <body>
-        {/* <ThemeProvider enableSystem> */}
+        <div className="flex items-center flex-col flex-grow pt-10 gap-y-4 bg-red-50 h-screen">
+          <div className="bg-white/80  rounded-full pt-4 pb-3 px-10">
+            <h1>💋 De Dating Sims 🎮</h1>
+          </div>
+          {/* <ThemeProvider enableSystem> */}
           {children}
           {/* </ThemeProvider> */}
+        </div>
       </body>
     </html>
   );

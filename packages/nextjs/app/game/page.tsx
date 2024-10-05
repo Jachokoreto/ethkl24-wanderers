@@ -1,19 +1,26 @@
 "use client";
 
-import Link from "next/link";
-import type { NextPage } from "next";
-import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Address } from "~~/components/scaffold-eth";
+import { useState } from "react";
 import { Button } from "./_components/Button";
+import { Card } from "./_components/Card";
+import { Home } from "./_components/Home";
+import { Memory } from "./_components/Memory";
+import type { NextPage } from "next";
+import { Page, useGlobalState } from "~~/services/store/store";
+
 
 const Game: NextPage = () => {
+const page = useGlobalState((state) => state.page);
 
   return (
-      <div className="flex items-center flex-col flex-grow pt-10 gap-y-4">
-        <h1>We start from this page</h1>
-        <Button text="Hola, click me" onClick={() => alert("clicked!!!!")} />
-      </div>
+    <>
+      <Card>
+        {page === "home" && <Home />}
+        {page === "game" && <></>}
+        {page === "memory" && <Memory />}
+        {page === "connection" && <></>}
+      </Card>
+    </>
   );
 };
 
