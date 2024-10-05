@@ -10,6 +10,7 @@ import { useAccount } from "wagmi";
 import { Temp } from "~~/app/api/verify/Temp";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { db } from "~~/services/firebase";
+import { useGlobalState } from "~~/services/store/store";
 import { useFirestore } from "~~/services/useFirestore";
 
 export const Home = () => {
@@ -18,7 +19,20 @@ export const Home = () => {
   const [isRegistered, setIsRegistered] = useState(false);
   const [name, setName] = useState("");
   const [isGuy, setIsGuy] = useState<null | boolean>(null);
-  const [proof, setProof] = useState<any>({});
+  const [setSessionId, setPage, setCurrentUser] = useGlobalState(state => [
+    state.setSessionId,
+    state.setPage,
+    state.setCurrentUser,
+  ]);
+
+  const updateToGame = (session: any) => {
+    console.log(session.data());
+    setSessionId(session.id);
+    setCurrentUser(session.data().user1 === account.address ? "user1" : "user2");
+    setTimeout(() => {
+      setPage("game");
+    }, 1000);
+  };
 
   const getUser = async () => {
     return await findAllDocumentsWhere("users", where("address", "==", account.address));
@@ -26,27 +40,21 @@ export const Home = () => {
 
   const getSession = async () => {
     const sessionsRef = collection(db, "sessions");
-  
     // Query for 'guy' equals account address
-    const guyQuery = query(sessionsRef, where("guy", "==", account.address));
-    const girlQuery = query(sessionsRef, where("girl", "==", account.address));
-  
+    const guyQuery = query(sessionsRef, where("user1", "==", account.address));
+    const girlQuery = query(sessionsRef, where("user2", "==", account.address));
     // Execute both queries
-    const [guyResults, girlResults] = await Promise.all([
-      getDocs(guyQuery),
-      getDocs(girlQuery)
-    ]);
-  
+    const [guyResults, girlResults] = await Promise.all([getDocs(guyQuery), getDocs(girlQuery)]);
+
     // Combine results into a single array, filtering out duplicates
     const uniqueDocs = new Map();
-    
-    guyResults.forEach(doc => uniqueDocs.set(doc.id, doc.data()));
+
+    guyResults.forEach(doc => uniqueDocs.set(doc.id, doc));
     girlResults.forEach(doc => {
       if (!uniqueDocs.has(doc.id)) {
-        uniqueDocs.set(doc.id, doc.data());
+        uniqueDocs.set(doc.id, doc);
       }
     });
-  
     return Array.from(uniqueDocs.values());
   };
 
@@ -58,10 +66,9 @@ export const Home = () => {
     });
     getSession().then(sessions => {
       if (sessions.length > 0) {
-        if (sessions[0].guy === account.address) {
-          setIsGuy(true);
-        } else {
-          setIsGuy(false);
+        setIsGuy(true);
+        if (sessions[0].user2 !== "") {
+          updateToGame(sessions[0]);
         }
       }
     });
@@ -70,12 +77,12 @@ export const Home = () => {
   // TODO: Calls your implemented server route
   const verifyProof = async (proof: any) => {
     // setProof(data.proof);
-    console.log(proof);
+    // console.log(proof);
     const res = await fetch("/api/verify", {
       method: "POST",
-      body: JSON.stringify({proof}),
+      body: JSON.stringify({ proof }),
     });
-    console.log(res);
+    // console.log(res);
     if (!res.ok) {
       throw new Error("Failed to verify proof");
     }
@@ -92,29 +99,45 @@ export const Home = () => {
 
   const createSession = async () => {
     let seesions = [];
-    if (isGuy) seesions = await findAllDocumentsWhere("sessions", where("guy", "==", ""));
-    else seesions = await findAllDocumentsWhere("sessions", where("girl", "==", ""));
+    // if is guy then find a session with no girl
+    // if (isGuy) seesions = await findAllDocumentsWhere("sessions", where("girl", "==", ""));
+    // else seesions = await findAllDocumentsWhere("sessions", where("guy", "==", ""));
+    // if (seesions.length > 0) {
+    //   modifyDocument("sessions", seesions[0].id, isGuy ? { guy: account.address } : { girl: account.address });
+    //   return;
+    // }
+    // // console.log({isGuy})
+    // if (isGuy) addDocument("sessions", { guy: account.address });
+    // else addDocument("sessions", { girl: account.address });
+    seesions = await findAllDocumentsWhere("sessions", where("user2", "==", ""));
     if (seesions.length > 0) {
-      modifyDocument("sessions", seesions[0].id, isGuy ? { guy: account.address } : { girl: account.address });
+      console.log(seesions[0]);
+      if (seesions[0].user1 === "") {
+        modifyDocument("sessions", seesions[0].id, { user1: account.address });
+      } else {
+        modifyDocument("sessions", seesions[0].id, { user2: account.address });
+      }
+      updateToGame(seesions[0]);
       return;
     }
-    if (isGuy) addDocument("sessions", { guy: account.address });
-    else addDocument("sessions", { girl: account.address });
+    addDocument("sessions", { user1: account.address, user2: "" });
   };
 
   useEffect((): (() => void) => {
-    const q = query(collection(db, "sessions"), orderBy("createdAt", "desc"), limit(1));
+    const q = query(collection(db, "sessions"), orderBy("createdAt", "desc"), limit(10));
     const unsubscribe = onSnapshot(q, QuerySnapshot => {
       const fetchedSessions: any[] = [];
       QuerySnapshot.forEach(doc => {
         fetchedSessions.push({ ...doc.data(), id: doc.id });
       });
       const session = fetchedSessions.filter(session => {
-        if (session.guy && session.girl) {
-          if (isGuy) return session.guy === account.address;
-          else return session.girl === account.address;
+        if (session.user1 && session.user2) {
+          return session.user1 === account.address || session.user2 === account.address;
         }
       });
+      if (session.length > 0) {
+        updateToGame(session[0]);
+      }
     });
     return () => unsubscribe;
   }, []);
@@ -136,18 +159,10 @@ export const Home = () => {
                     <Button
                       className="w-full font-bold"
                       onClick={() => {
-                        setIsGuy(false);
-                        createSession();
-                      }}
-                      text="him"
-                    ></Button>
-                    <Button
-                      className="w-full font-bold"
-                      onClick={() => {
                         setIsGuy(true);
                         createSession();
                       }}
-                      text="her"
+                      text="Start"
                     ></Button>
                   </div>
                 </>

@@ -1,29 +1,39 @@
 import React, { use, useEffect, useState } from "react";
 import { Button } from "../Button";
 import { getScenes, scene1 } from "./_scene/scene1";
-import { addDoc, collection, limit, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, limit, onSnapshot, orderBy, query, serverTimestamp, where } from "firebase/firestore";
 import { send } from "process";
 import { db } from "~~/services/firebase";
 import { IOption, IScene, UserType, useGlobalState } from "~~/services/store/store";
+import { useFirestore } from "~~/services/useFirestore";
 
 const scenes: IScene[] = scene1;
 
-const currentUser: UserType = "user1";
-const oppositeUser: UserType = currentUser === "user1" ? "user2" : "user1";
+// const currentUser: UserType = "user1";
+// const oppositeUser: UserType = currentUser === "user1" ? "user2" : "user1";
 
 export const SceneUI = () => {
-  const [savedInteractions, updateSavedInteractions, setGameState] = useGlobalState(state => [
+  const [savedInteractions, updateSavedInteractions, setGameState, currentUser, sessionId] = useGlobalState(state => [
     state.savedInteractions,
     state.updateSavedInteractions,
     state.setGameState,
+    state.currentUser,
+    state.sessionId,
   ]);
   const [currentStep, setCurrentStep] = useState<IScene | undefined>(undefined);
   const [scenes, setScenes] = useState<IScene[] | undefined>(undefined);
   const [tempPrevios, setTempPrevios] = useState<string>("");
+  const oppositeUser: UserType = currentUser === "user1" ? "user2" : "user1";
+  const { addDocument } = useFirestore();
 
   useEffect(() => {
+    console.log(currentUser);
     setScenes(getScenes(currentUser));
   }, []);
+
+  useEffect(() => {
+    if (scenes) setCurrentStep(scenes[0]);
+  }, [scenes]);
 
   // useEffect(() => {
   //   // fake user2 interaction
@@ -33,35 +43,61 @@ export const SceneUI = () => {
   // }, [savedInteractions]);
 
   const toNextStep = (option: IOption) => {
-    const nextStep = scenes!.find(step => step.id === option.to); // null option.to means end of game
-    if (!nextStep) return setGameState("end");
+    console.log("toNextStep", option);
+    console.log({scenes});
+    const nextStep = scenes?.find(step => step.id === option.to); // Remove non-null assertion
+    if (!nextStep) {
+      setGameState("end");
+      return;
+    }
     setCurrentStep(nextStep);
   };
-
   const sendOption = async (option: IOption, from: string) => {
     // const { uid, displayName, photoURL } = auth.currentUser;
-    await addDoc(collection(db, "scenes"), {
-      scene: { ...currentStep, options: [option] },
-      createdAt: serverTimestamp(),
-      // uid
-    });
+
+    console.log("sendOption", option);
+    // await addDoc(collection(db, "scenes"), {
+    //   scene: { ...currentStep, options: [option] },
+    //   createdAt: serverTimestamp(),
+    //   sessionId: sessionId,
+    //   // uid
+    // });
+    await addDocument(
+      "scenes",
+      {
+        scene: { ...currentStep, options: [option] },
+        sessionId: sessionId,
+        createdAt: serverTimestamp(),
+      },
+      `${sessionId}-${option.to || "end"}`,
+    );
+
     // updateSavedInteractions([...(savedInteractions as any), { ...currentStep, options: [option] }]);
   };
 
   useEffect((): (() => void) => {
-    const q = query(collection(db, "options"), orderBy("createdAt", "desc"), limit(50));
+    console.log({ sessionId });
+    if (!sessionId) return () => {};
+    const q = query(collection(db, "scenes"), where("sessionId", "==", sessionId), orderBy("createdAt", "desc"));
+
     const unsubscribe = onSnapshot(q, QuerySnapshot => {
+      console.log("get snapshot");
       const fetchedOptions: any[] = [];
       QuerySnapshot.forEach(doc => {
         fetchedOptions.push({ ...doc.data(), id: doc.id });
       });
-      const sortedMessages = fetchedOptions.sort((a: any, b: any) => a.createdAt - b.createdAt);
-      if (sortedMessages[sortedMessages.length - 1].from === oppositeUser) {
-        toNextStep(sortedMessages[sortedMessages.length - 1]);
+      console.log({fetchedOptions});
+      // const sortedMessages = fetchedOptions.sort((a: any, b: any) => a.createdAt - b.createdAt);
+      if (fetchedOptions.length) {
+        console.log("to nect step");
+        console.log("helo", fetchedOptions[0]);
+        toNextStep(fetchedOptions[0].scene.options[0]);
       }
+
+      // }
     });
     return () => unsubscribe;
-  }, []);
+  }, [sessionId]);
 
   if (!currentStep) return <></>;
   return (
@@ -74,7 +110,7 @@ export const SceneUI = () => {
                 key={index}
                 onClick={() => {
                   sendOption(option, currentStep!.from);
-                  toNextStep(option);
+                  // toNextStep(option);
                 }}
                 text={option.text}
               />
@@ -88,9 +124,9 @@ export const SceneUI = () => {
 
             if (currentStep.from === "system")
               if (currentUser === "user1") {
+                console.log("clickbox");
                 sendOption(currentStep.options[0], currentStep!.from);
               }
-            toNextStep(currentStep.options[0]);
           }}
         >
           <div className="text-white p-4">

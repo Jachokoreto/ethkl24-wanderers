@@ -45,6 +45,10 @@ type GlobalState = {
   updateSavedInteractions: (newInteractions: IScene[]) => void;
   loggedIn: boolean;
   setLoggedIn: (loggedIn: boolean) => void;
+  sessionId: string;
+  setSessionId: (sessionId: string) => void;
+  currentUser: UserType;
+  setCurrentUser: (currentUser: UserType) => void;
 };
 
 export const useGlobalState = create<GlobalState>(set => ({
@@ -68,5 +72,8 @@ export const useGlobalState = create<GlobalState>(set => ({
   updateSavedInteractions: (newInteractions: IScene[]) => set(() => ({ savedInteractions: newInteractions })),
   loggedIn: false,
   setLoggedIn: (loggedIn: boolean) => set(() => ({ loggedIn })),
-  
+  sessionId: "",
+  setSessionId: (sessionId: string) => set(() => ({ sessionId })),
+  currentUser: "user1",
+  setCurrentUser: (currentUser: UserType) => set(() => ({ currentUser })),
 }));

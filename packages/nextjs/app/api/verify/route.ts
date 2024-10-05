@@ -1,5 +1,3 @@
-"use client";
-
 // import { IVerifyResponse } from "@worldcoin/idkit-core";
 import { verifyCloudProof } from "@worldcoin/idkit-core/backend";
 
@@ -13,7 +11,8 @@ export async function POST(req: Request) {
   // return new Response("Success!", {
   //   status: 200,
   // });
-  const proof = await req.json();
+  const { proof } = await req.json();
+  console.log(proof);
   // // const app_id = process.env.APP_ID;
   // // const action = process.env.ACTION_ID;
   const verifyRes = await verifyCloudProof(proof, "app_staging_dcca90fc66daec268357344dd2fd8c2a", "register", "");

@@ -26,9 +26,8 @@ export function useFirestore() {
   const addDocument = async (
     collectionPath: string,
     data: DocumentData,
-    docId?: string
+    docId?: string,
   ): Promise<{ docId: string; data: any }> => {
-    console.log("calling");
     const collectionRef = collection(db, collectionPath);
     if (docId) {
       const docRef = doc(collectionRef, docId);
@@ -89,7 +88,7 @@ export function useFirestore() {
     const collectionRef = collection(db, collectionPath);
     const q = query(collectionRef, ...queryConstraints);
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => doc.data());
+    return querySnapshot.docs;
   };
 
   // const findTalents = async (): Promise<User[]> => {
