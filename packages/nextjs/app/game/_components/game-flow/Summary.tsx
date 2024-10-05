@@ -13,11 +13,11 @@ export const Summary = () => {
   };
 
   const onLike = () => {
-    console.log("Liked");
+    console.log("Liked", { story });
   };
 
   const onPass = () => {
-    console.log("Passed");
+    console.log("Passed", { story });
   };
 
   return (
