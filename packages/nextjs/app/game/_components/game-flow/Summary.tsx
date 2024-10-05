@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../Button";
 import { Card } from "../Card";
-import SwipeContractABI from "../SwipeContractABI.json";
 import { motion } from "framer-motion";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { nftContractAbi, nft_CONTRACT_ADDRESS } from "~~/contracts/nftContract";
+import { swipeContractAbi, swipe_CONTRACT_ADDRESS } from "~~/contracts/swipeContract";
 // import Web3 from "web3";
 import { useGlobalState } from "~~/services/store/store";
 
@@ -92,7 +93,7 @@ export const Summary = () => {
     //   }
     // }
     writeContract({
-      abi: SwipeContractABI,
+      abi: swipeContractAbi,
       address: CONTRACT_ADDRESS,
       functionName: "swipe",
       args: ["0x234F17c5DD33459177629aa05EE53eB4879Cd935", true, story],
@@ -116,7 +117,7 @@ export const Summary = () => {
     //   }
     // }
     writeContract({
-      abi: SwipeContractABI,
+      abi: swipeContractAbi,
       address: CONTRACT_ADDRESS,
       functionName: "swipe",
       args: ["0x234F17c5DD33459177629aa05EE53eB4879Cd935", true, story],

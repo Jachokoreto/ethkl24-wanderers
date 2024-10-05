@@ -1,8 +1,7 @@
 import React, { use, useEffect, useState } from "react";
 import { Button } from "./Button";
 import { useAccount, useWriteContract } from "wagmi";
-import { CONTRACT_ADDRESS, nftContractAbi } from "~~/contracts/nftContract";
-import { CONTRACT_ADDRESS as SwipeContractAddress, swipeContractAbi } from "~~/contracts/swipeContract";
+import { swipeContractAbi, swipe_CONTRACT_ADDRESS } from "~~/contracts/swipeContract";
 
 // import Web3 from "web3";
 
@@ -31,7 +30,7 @@ export const Memory = () => {
         onClick={() => {
           writeContract({
             abi: swipeContractAbi,
-            address: CONTRACT_ADDRESS,
+            address: swipe_CONTRACT_ADDRESS,
             functionName: "mint",
             args: [account, "This is testing"],
           });

@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Provider>
           <div
-            className={`flex items-center flex-col flex-grow pt-10 gap-y-4 bg-red-50 h-screen ${jost.variable} font-sans bg-gray-700`}
+            className={`flex items-center flex-col flex-grow gap-y-4  h-screen ${jost.variable} font-sans bg-gray-700`}
           >
             {/* <div className="bg-white/80  rounded-full pt-4 pb-3 px-10">
             <h1>💋 De Dating Sims 🎮</h1>

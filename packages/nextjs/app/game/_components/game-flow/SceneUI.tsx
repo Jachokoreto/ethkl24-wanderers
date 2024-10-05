@@ -1,9 +1,9 @@
 import React, { use, useEffect, useState } from "react";
 import { Button } from "../Button";
 import { getScenes, scene1 } from "./_scene/scene1";
-import { send } from "process";
 import { addDoc, collection, limit, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
-import { db } from "~~/firebase";
+import { send } from "process";
+import { db } from "~~/services/firebase";
 import { IOption, IScene, UserType, useGlobalState } from "~~/services/store/store";
 
 const scenes: IScene[] = scene1;
@@ -41,7 +41,7 @@ export const SceneUI = () => {
   const sendOption = async (option: IOption, from: string) => {
     // const { uid, displayName, photoURL } = auth.currentUser;
     await addDoc(collection(db, "scenes"), {
-      scene: {...currentStep, options: [option]},
+      scene: { ...currentStep, options: [option] },
       createdAt: serverTimestamp(),
       // uid
     });
@@ -58,7 +58,7 @@ export const SceneUI = () => {
       const sortedMessages = fetchedOptions.sort((a: any, b: any) => a.createdAt - b.createdAt);
       if (sortedMessages[sortedMessages.length - 1].from === oppositeUser) {
         toNextStep(sortedMessages[sortedMessages.length - 1]);
-      };
+      }
     });
     return () => unsubscribe;
   }, []);
