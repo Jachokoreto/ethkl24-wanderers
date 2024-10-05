@@ -8,18 +8,15 @@ import { Memory } from "./_components/Memory";
 import type { NextPage } from "next";
 import { Page, useGlobalState } from "~~/services/store/store";
 
-
 const Game: NextPage = () => {
-const page = useGlobalState((state) => state.page);
+  const page = useGlobalState(state => state.page);
 
   return (
     <>
-      <Card>
-        {page === "home" && <Home />}
-        {page === "game" && <></>}
-        {page === "memory" && <Memory />}
-        {page === "connection" && <></>}
-      </Card>
+      {page === "home" && <Home />}
+      {page === "game" && <></>}
+      {page === "memory" && <Memory />}
+      {page === "connection" && <></>}
     </>
   );
 };
