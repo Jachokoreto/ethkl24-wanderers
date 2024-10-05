@@ -11,6 +11,19 @@ import { ChainWithAttributes } from "~~/utils/scaffold-eth";
  * Think about it as a global useState.
  */
 export type Page = "home" | "game" | "memory" | "connection";
+export type GameState = "playing" | "end";
+
+export type SceneId = string | null;
+export interface IScene {
+  id: SceneId;
+  from: "system" | "user1" | "user2";
+    options: {
+    text: string;
+    to: SceneId;
+  }[]; // only one option from system, two option from user1 and user2
+}
+
+
 
 type GlobalState = {
   nativeCurrency: {
@@ -25,6 +38,10 @@ type GlobalState = {
   // Add your own global state here
   page: Page;
   setPage: (page: Page) => void;
+  gameState:  GameState;
+  setGameState: (gameState: GameState) => void;
+  savedInteractions: IScene[];
+  updateSavedInteractions: (newInteractions: IScene[]) => void;
 };
 
 export const useGlobalState = create<GlobalState>(set => ({
@@ -42,4 +59,9 @@ export const useGlobalState = create<GlobalState>(set => ({
   // Add your own global state here
   page: "home",
   setPage: (page: Page) => set(() => ({ page })),
+  gameState: "playing",
+  setGameState: (gameState: GameState) => set(() => ({ gameState })),
+  savedInteractions: [],
+  updateSavedInteractions: (newInteractions: IScene[]) => set(() => ({ savedInteractions: newInteractions })),
+  
 }));
