@@ -7,6 +7,7 @@ import { nftContractAbi, nft_CONTRACT_ADDRESS } from "~~/contracts/nftContract";
 import { swipeContractAbi, swipe_CONTRACT_ADDRESS } from "~~/contracts/swipeContract";
 // import Web3 from "web3";
 import { useGlobalState } from "~~/services/store/store";
+import { useFirestore } from "~~/services/useFirestore";
 
 // Add your compiled contract's ABI here
 
@@ -23,6 +24,7 @@ export const Summary = () => {
   // const [account, setAccount] = useState("");
   const account = useAccount();
   const { writeContract } = useWriteContract();
+  const {findDocument} = useFirestore();
 
   // useEffect(() => {
   //   // Initialize Web3 for Scroll Sepolia
@@ -73,6 +75,9 @@ export const Summary = () => {
 
   //   initWeb3();
   // }, []);
+  useEffect(() => {
+    
+  }, []);
 
   const onSwiped = (direction: Direction) => {
     console.log(`Swiped ${direction}`);

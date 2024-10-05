@@ -7,7 +7,7 @@ import { db } from "~~/services/firebase";
 import { IOption, IScene, UserType, useGlobalState } from "~~/services/store/store";
 import { useFirestore } from "~~/services/useFirestore";
 
-const scenes: IScene[] = scene1;
+const backupScenes: IScene[] = scene1;
 
 // const currentUser: UserType = "user1";
 // const oppositeUser: UserType = currentUser === "user1" ? "user2" : "user1";
@@ -44,13 +44,15 @@ export const SceneUI = () => {
 
   const toNextStep = (option: IOption) => {
     console.log("toNextStep", option);
-    console.log({scenes});
-    const nextStep = scenes?.find(step => step.id === option.to); // Remove non-null assertion
+    console.log("SCENSE", { backupScenes });
+    const nextStep = backupScenes?.find(step => step.id === option.to); // Remove non-null assertion
     if (!nextStep) {
       setGameState("end");
       return;
     }
+    setTempPrevios(option.text || "end");
     setCurrentStep(nextStep);
+
   };
   const sendOption = async (option: IOption, from: string) => {
     // const { uid, displayName, photoURL } = auth.currentUser;
@@ -86,7 +88,7 @@ export const SceneUI = () => {
       QuerySnapshot.forEach(doc => {
         fetchedOptions.push({ ...doc.data(), id: doc.id });
       });
-      console.log({fetchedOptions});
+      console.log({ fetchedOptions });
       // const sortedMessages = fetchedOptions.sort((a: any, b: any) => a.createdAt - b.createdAt);
       if (fetchedOptions.length) {
         console.log("to nect step");
@@ -130,11 +132,7 @@ export const SceneUI = () => {
           }}
         >
           <div className="text-white p-4">
-            {currentStep.from === "system" || (currentStep.from !== currentUser && currentStep.options.length) ? (
-              <p>{currentStep.options[0].text}</p>
-            ) : (
-              <p>Waiting...</p>
-            )}
+            {currentStep.from === "system" ? <p>{currentStep.options[0].text}</p> : <p>{tempPrevios} <br/> <span className="opacity-60">{currentStep.from !== currentUser ? "Waiting..." :""}</span></p>}
           </div>
         </div>
       </div>
