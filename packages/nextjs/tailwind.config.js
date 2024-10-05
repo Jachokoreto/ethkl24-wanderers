@@ -82,6 +82,16 @@ module.exports = {
       animation: {
         "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
+      colors: {
+        "pink-light": "#FAD0C9",
+        "pink-lighter": "#FFEDF5",
+        "pink-lightest": "#FFF5FA",
+        "gray-light": "6E6E6E",
+        "pink-beige": "BD7466"
+      },
+      fontFamily: {
+        sans: ['var(--font-jost)'],
+      },
     },
   },
 };
