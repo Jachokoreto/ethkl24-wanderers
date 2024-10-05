@@ -10,6 +10,7 @@ import { ChainWithAttributes } from "~~/utils/scaffold-eth";
  *
  * Think about it as a global useState.
  */
+export type Page = "home" | "game" | "memory" | "connection";
 
 type GlobalState = {
   nativeCurrency: {
@@ -20,6 +21,10 @@ type GlobalState = {
   setIsNativeCurrencyFetching: (newIsNativeCurrencyFetching: boolean) => void;
   targetNetwork: ChainWithAttributes;
   setTargetNetwork: (newTargetNetwork: ChainWithAttributes) => void;
+
+  // Add your own global state here
+  page: Page;
+  setPage: (page: Page) => void;
 };
 
 export const useGlobalState = create<GlobalState>(set => ({
@@ -33,4 +38,8 @@ export const useGlobalState = create<GlobalState>(set => ({
     set(state => ({ nativeCurrency: { ...state.nativeCurrency, isFetching: newValue } })),
   targetNetwork: scaffoldConfig.targetNetworks[0],
   setTargetNetwork: (newTargetNetwork: ChainWithAttributes) => set(() => ({ targetNetwork: newTargetNetwork })),
+
+  // Add your own global state here
+  page: "home",
+  setPage: (page: Page) => set(() => ({ page })),
 }));

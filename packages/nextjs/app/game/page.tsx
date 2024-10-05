@@ -1,15 +1,24 @@
 "use client";
+
+import { useState } from "react";
 import { Button } from "./_components/Button";
-import type { NextPage } from "next";
 import { Card } from "./_components/Card";
+import { Home } from "./_components/Home";
+import { Memory } from "./_components/Memory";
+import type { NextPage } from "next";
+import { Page, useGlobalState } from "~~/services/store/store";
+
 
 const Game: NextPage = () => {
+const page = useGlobalState((state) => state.page);
+
   return (
     <>
       <Card>
-        <div className="h-full flex-col flex justify-center">
-          <Button text="Hola, click me" onClick={() => alert("clicked!!!!")} />
-        </div>
+        {page === "home" && <Home />}
+        {page === "game" && <></>}
+        {page === "memory" && <Memory />}
+        {page === "connection" && <></>}
       </Card>
     </>
   );
