@@ -14,8 +14,8 @@ export const SceneUI = () => {
   const [currentStep, updateCurrentStep] = useState<IScene>(scenes[0]);
 
   return (
-    <div>
-      <div className="bg-black/70 border-white rounded-md h-60 w-full m-6 overflow-y-auto">
+    <div className="bg-[url('/asset/cafe-bg.png')] bg-cover h-screen w-screen absolute top-0 left-0">
+      <div className="bg-black/70 border-white rounded-md h-60 w-full m-6 overflow-y-auto absolute bottom-4 left-1/2 -trans">
         {currentStep.options.length === 1 && (
           <div className="text-white p-4">{currentStep.options[0].text}</div>
         )}
