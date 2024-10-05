@@ -10,6 +10,7 @@ const story =
 type Direction = "left" | "right";
 export const Summary = () => {
   const [setPage] = useGlobalState(state => [state.setPage]);
+
   const onSwiped = (direction: Direction) => {
     console.log(`Swiped ${direction}`);
   };
