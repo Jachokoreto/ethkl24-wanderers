@@ -42,5 +42,8 @@
   },
   "engines": {
     "node": ">=18.18.0"
+  },
+  "dependencies": {
+    "web3": "^4.13.0"
   }
 }

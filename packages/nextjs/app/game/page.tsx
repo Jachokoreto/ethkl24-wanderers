@@ -18,7 +18,8 @@ const Game: NextPage = () => {
       {page === "game" && <GameFlow />}
       {page === "memory" && <Memory />}
       {page === "connection" && <></>}
-      <Button onClick={() => setPage("game")} text="Start" className="absolute bottom-2 right-2"/>
+      <Button onClick={() => setPage("game")} text="Start" className="absolute bottom-2 right-2" />
+      <Button onClick={() => setPage("memory")} text="Memory" className="absolute bottom-2 left-2" />
     </>
   );
 };
