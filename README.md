@@ -1,10 +1,10 @@
-# 🏗 ETH Kuala Lumpur Wanderers
+# 🏗 ETH Kuala Lumpur Wanderers Documentation
 
-🧪 A gamified, dating platform 
+🧪 A gamified, dating platform where we combine the user validity of Worldcoin, the on-chain AI capabilities of ORA and the flexibilities of both Scroll and Manta Networks.
 
 ## Scroll
 
-We deployed two smart contracts on Scroll's testnet:
+We deployed two smart contracts on Scroll:
 
 1. SwipeContract:
 
@@ -36,10 +36,4 @@ https://sepolia.scrollscan.com/address/0x91e1291C6983815dA023e160FdeDc3C18E2d716
 
 1. Authentication of users:
 
-We use World ID to make sure that only real humans use our app to ensure app integrity. We used the incognito action to make sure the user can only scan the QR 
-
-## Documentation
-
-
-
-
+We used World ID to make sure that only real humans use our app to ensure app integrity. We used the incognito action to create an account on our app.
