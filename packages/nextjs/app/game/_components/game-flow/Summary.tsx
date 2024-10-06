@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../Button";
 import { Card } from "../Card";
+import { where } from "firebase/firestore";
 import { motion } from "framer-motion";
+import { get } from "http";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import Web3 from "web3";
 import { nftContractAbi, nft_CONTRACT_ADDRESS } from "~~/contracts/nftContract";
 import { swipeContractAbi, swipe_CONTRACT_ADDRESS } from "~~/contracts/swipeContract";
 // import Web3 from "web3";
 import { useGlobalState } from "~~/services/store/store";
 import { useFirestore } from "~~/services/useFirestore";
-import { where } from "firebase/firestore";
-import { get } from "http";
-import Web3 from "web3";
 
 // Add your compiled contract's ABI here
 
@@ -22,7 +22,7 @@ const CONTRACT_ADDRESS = "0xbFfC48ed6462BE8A45a377CA3D480959e5B7B690"; // Replac
 type Direction = "left" | "right";
 
 export const Summary = () => {
-  const [setPage, sessionId] = useGlobalState(state => [state.setPage, state.sessionId]);
+  const [setPage, sessionId, setSessionId] = useGlobalState(state => [state.setPage, state.sessionId, state.setSessionId]);
   const [web3, setWeb3] = useState<any>(null);
   const [account2, setAccount] = useState("");
   const account = useAccount();
@@ -80,14 +80,14 @@ export const Summary = () => {
 
     initWeb3();
   }, []);
-  
+
   const setTargetUser = async () => {
     const sessions = await findDocument("sessions", sessionId);
     console.log("SESSIONS", { sessions });
     if (sessions) {
-    setTarget(sessions[0].user1 === account.address ? "user2" : "user1");
+      setTarget(sessions[0].user1 === account.address ? "user2" : "user1");
     }
-  }
+  };
 
   const getAndSetStory = async () => {
     const scenes = await findAllDocumentsWhere("scenes", where("sessionId", "==", sessionId));
@@ -95,8 +95,7 @@ export const Summary = () => {
     if (scenes.length > 0) {
       setStory(scenes.map(scene => scene.data().scene.options[0].text).join("\n\n"));
     }
-    
-  }
+  };
   useEffect(() => {
     setTargetUser();
     getAndSetStory();
@@ -110,16 +109,18 @@ export const Summary = () => {
     console.log("Liked", { story });
     // setPage("home");
 
-    if (web3 && account2) {
-      const contract = new web3.eth.Contract(swipeContractAbi, swipe_CONTRACT_ADDRESS);
-      try {
-        // Call the contract's swipe method
-        await contract.methods.swipe(target, true, story).send({ from: account2 });
-        console.log("Story liked!");
-      } catch (error) {
-        console.error("Error liking story:", error);
-      }
-    }
+    // if (web3 && account2) {
+    //   const contract = new web3.eth.Contract(swipeContractAbi, swipe_CONTRACT_ADDRESS);
+    //   try {
+    //     // Call the contract's swipe method
+    //     await contract.methods.swipe(target, true, story).send({ from: account2 });
+    //     console.log("Story liked!");
+    //     setSessionId("");
+    //     setPage("home");
+    //   } catch (error) {
+    //     console.error("Error liking story:", error);
+    //   }
+    // }
     // writeContract({
     //   abi: swipeContractAbi,
     //   address: CONTRACT_ADDRESS,
@@ -133,13 +134,14 @@ export const Summary = () => {
     // setPage("home");
 
     if (web3 && account2) {
+      console.log("ACCOUNT", { account2 });
       const contract = new web3.eth.Contract(swipeContractAbi, swipe_CONTRACT_ADDRESS);
       try {
         // Call the contract's swipe method
-        await contract.methods
-          .swipe(target, false, story)
-          .send({ from: account2 });
+        await contract.methods.swipe(target, false, story).send({ from: account2 });
         console.log("Story passed!");
+        setSessionId("");
+        setPage("home");
       } catch (error) {
         console.error("Error passing story:", error);
       }
@@ -154,6 +156,9 @@ export const Summary = () => {
 
   return (
     <>
+      <div className="bg-white/80  rounded-full pt-4 pb-3 px-10 mb-10 mt-4">
+        <h1>💋 De Dating Sims 🎮</h1>
+      </div>
       <motion.div
         drag={"x"}
         dragConstraints={{ left: -200, right: 200 }}
@@ -166,14 +171,7 @@ export const Summary = () => {
           {/* <p>{story.replace(/\n/g, "<br>")}</p> */}
 
           <p>{story}</p>
-          {/* <p>
-            {story.map((line, index) => (
-              <span key={index}>
-                {line}
-                <br />
-              </span>
-            ))}
-          </p> */}
+
         </Card>
       </motion.div>
       <div className="flex justify-between mt-4">

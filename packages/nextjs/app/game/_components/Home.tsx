@@ -55,7 +55,7 @@ export const Home = () => {
         uniqueDocs.set(doc.id, doc);
       }
     });
-    return Array.from(uniqueDocs.values());
+    return Array.from(uniqueDocs.values()).filter(doc => doc.data().status !== "ended");
   };
 
   useEffect(() => {
@@ -143,7 +143,10 @@ export const Home = () => {
   }, []);
 
   return (
-    <div className="h-screen flex items-center justify-center">
+    <div className="h-screen flex items-center justify-center flex-col relative">
+      <div className="bg-white/80  rounded-full pt-4 pb-3 px-10 mb-10 mt-4 absolute top-4">
+        <h1>💋 De Dating Sims 🎮</h1>
+      </div>
       {/* <Temp proof={proof} /> */}
       <div className="card bg-gray-600 h-[350px] w-[600px] rounded-3xl text-white">
         <div className="card-body items-center text-center">
@@ -195,13 +198,13 @@ export const Home = () => {
       </div>
       <div className="card-actions mt-4 absolute bottom-10 flex gap-x-8">
         <div className="flex flex-col items-center">
-          <button className="hover:bg-red-300 bg-white border-white btn btn-circle w-16 h-16 flex items-center justify-center text-2xl">
+          <button className="hover:bg-red-300 bg-white border-white btn btn-circle w-16 h-16 flex items-center justify-center text-2xl" onClick={() => {setPage("home")}}>
             🎮
           </button>
           <p>Home</p>
         </div>
         <div className="flex flex-col items-center">
-          <button className="hover:bg-red-300 bg-white border-white btn btn-circle w-16 h-16 flex items-center justify-center text-2xl">
+          <button className="hover:bg-red-300 bg-white border-white btn btn-circle w-16 h-16 flex items-center justify-center text-2xl" onClick={() => setPage("memory")}>
             📒
           </button>
           <p>Memory</p>

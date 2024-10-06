@@ -23,8 +23,11 @@ export const Memory = () => {
   // };
 
   return (
-    <div>
-      <h1>Memory</h1>
+    <div className="flex flex-col justify-center items-center">
+      <div className="bg-white/80  rounded-full pt-4 pb-3 px-10 mb-10 mt-4">
+        <h1>💋 De Dating Sims 🎮</h1>
+      </div>
+      <h1 className="text-white">Memory</h1>
       <Button
         text="Mint"
         onClick={() => {
