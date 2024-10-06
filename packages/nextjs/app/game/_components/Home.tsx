@@ -184,7 +184,7 @@ export const Home = () => {
                 onChange={e => setName(e.target.value)}
               />
               <IDKitWidget
-                app_id="app_staging_dcca90fc66daec268357344dd2fd8c2a"
+                app_id="app_71da27adf989e8eca4f373dba8c4b36b"
                 action="register"
                 verification_level={VerificationLevel.Device}
                 handleVerify={verifyProof}

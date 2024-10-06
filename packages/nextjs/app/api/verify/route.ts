@@ -15,8 +15,8 @@ export async function POST(req: Request) {
   console.log(proof);
   // // const app_id = process.env.APP_ID;
   // // const action = process.env.ACTION_ID;
-  const verifyRes = await verifyCloudProof(proof, "app_staging_dcca90fc66daec268357344dd2fd8c2a", "register", "");
-  // const verifyRes = await fetch("https://developer.worldcoin.org/api/v2/verify/app_staging_dcca90fc66daec268357344dd2fd8c2a", {
+  const verifyRes = await verifyCloudProof(proof, "app_71da27adf989e8eca4f373dba8c4b36b", "register", "");
+  // const verifyRes = await fetch("https://developer.worldcoin.org/api/v2/verify/app_71da27adf989e8eca4f373dba8c4b36b", {
   //   method: "POST",
   //   headers: {
   //     "Content-Type": "application/json",
